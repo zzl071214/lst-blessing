@@ -81,7 +81,7 @@ npx serve .
 
 - **换祝福语**：编辑 `normalBlessings` 数组，随便加多少条，会随机抽取。
 - **换气泡颜色**：编辑 `popupBgColors` 数组。
-- **换顶部日期和署名**：直接改 `<h1 class="main-title">` 和 `<p class="signature">`。
+- **换顶部两行日期和署名**：直接改 `<h1 class="main-title">`（第一行）、`<p class="subtitle">`（第二行）和 `<p class="signature">`（署名）。两行字号由 CSS 统一控制（`.main-title` / `.subtitle` 的 `font-size`）。
 - **换背景音乐**：音乐已自托管在仓库根目录（`lst.mp3`），直接替换这个文件即可，改名就同步改 `index.html` 里第一行 `<source>` 的 `src`。
 
 > 音乐说明：浏览器会拦截「自动播放」，所以页面右上角有一个 🎵 按钮，点它（或点「打开」）才会开始播放。若外链音乐失效，页面其他功能不受影响。
