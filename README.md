@@ -1,4 +1,4 @@
-# LST · 藏在弹窗里的祝福
+# LST&ZZL
 
 ![HTML](https://img.shields.io/badge/HTML-单文件-e91e63)
 ![无依赖](https://img.shields.io/badge/依赖-零-ff69b4)
