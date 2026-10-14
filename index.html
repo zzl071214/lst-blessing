@@ -263,9 +263,14 @@
 
     <button id="musicToggle" class="music-toggle" type="button" aria-label="播放/暂停背景音乐" title="播放/暂停背景音乐">🔇</button>
 
-    <!-- 想换成自己的歌：把 source 的 src 换成本地文件名（例如 music.mp3）或你自己的直链；也可以删掉 <source> 只留一个文件 -->
+    <!--
+      背景音乐：优先播放仓库内自托管的 lst.mp3（同源，所有浏览器/App 表现一致）。
+      后面的抖音 CDN 仅作兜底。注意不要再把会失效的外链放在第一位：
+      各浏览器对 <source> 回退的处理不同，会出现"不同软件听到不同音乐"的问题。
+      想换歌：把新文件放进仓库根目录，改下面第一行 src 即可。
+    -->
     <audio id="bgMusic" loop preload="none" playsinline>
-        <source src="https://music.163.com/song/media/outer/url?id=1974443814.mp3" type="audio/mpeg">
+        <source src="lst.mp3" type="audio/mpeg">
         <source src="https://sf5-hl-cdn-tos.douyinstatic.com/obj/ies-music/7499771397531503370.mp3" type="audio/mpeg">
         您的浏览器不支持音频元素。
     </audio>
