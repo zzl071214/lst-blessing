@@ -33,42 +33,11 @@
         font-family: "YouYuan", "幼圆", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif;
         font-weight: bold;
         text-align: center;
-        padding: 60px 20px 20px;
+        padding: 20px;
         position: relative;
         overflow-x: hidden;
         -webkit-tap-highlight-color: transparent;
     }
-
-    .main-title {
-        color: var(--pink-deep);
-        font-size: clamp(22px, 6vw, 30px);
-        margin-bottom: 12px;
-    }
-
-    .subtitle {
-        color: var(--pink-deep);
-        font-size: clamp(22px, 6vw, 30px);
-        font-weight: bold;
-        margin-bottom: 32px;
-    }
-
-    .signature { margin-top: 26px; font-size: 14px; color: #c2185b; opacity: .8; }
-
-    .initial-btn {
-        background-color: var(--pink-deep);
-        color: #fff;
-        border: none;
-        border-radius: 30px;
-        font-size: clamp(16px, 4.4vw, 18px);
-        font-family: inherit;
-        font-weight: bold;
-        padding: 12px 35px;
-        cursor: pointer;
-        transition: transform .3s ease, opacity .3s ease, background-color .3s ease;
-    }
-    .initial-btn:hover { transform: scale(1.05); opacity: .9; }
-    .initial-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-    .initial-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; opacity: 1; }
 
     .bless-popup {
         position: fixed;
@@ -231,11 +200,10 @@
 </head>
 <body>
 
-    <h1 class="main-title">始于 2026 年 3 月 29 日</h1>
-    <p class="subtitle">终于 2026 年 9 月 25 日</p>
-
-    <button id="initialTvBtn" class="initial-btn" type="button">打开</button>
-    <p class="signature">—— zzl</p>
+    <!--
+      本页不再有任何界面元素与按钮：从短网址点「打开」跳进来后，
+      自动开始播放祝福弹窗动画，屏幕上直接是空白背景 + 弹窗。
+    -->
 
     <!--
       背景音乐：优先播放仓库内自托管的 lst.mp3（同源，所有浏览器/App 表现一致）。
@@ -317,7 +285,6 @@
     const pendingTimers = new Set();
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const initialTvBtn = document.getElementById("initialTvBtn");
     const bgMusic = document.getElementById("bgMusic");
 
     function later(fn, ms) {
@@ -393,7 +360,6 @@
         removeAllPopups();
         popupList = [];
         isWithdrawing = false;
-        initialTvBtn.disabled = true;
 
         const total = CONFIG.totalPopups;
         for (let i = 0; i < total - 1; i++) {
@@ -469,7 +435,6 @@
                 removeAllPopups();
                 popupList = [];
                 isWithdrawing = false;
-                initialTvBtn.disabled = false;
             }, 400);
         });
         fp.appendChild(cb);
@@ -481,16 +446,30 @@
     }
 
     /* ===== 背景音乐 =====
-       音乐在点击「打开」时开始播放（属于用户手势，符合浏览器自动播放策略）。
-       页面上不再提供静音按钮，如需暂停请直接使用设备音量键。 */
+       本页没有按钮，音乐在进入页面时自动尝试播放；
+       若被浏览器的自动播放策略拦截，点屏幕任意位置即可开启。
+       如需暂停，直接用设备音量键。 */
+
+    /* ===== 启动：进入页面即自动开始播放祝福弹窗 ===== */
+    generateAllPopups();
+
+    // 浏览器常会拦截自动播放：首次点击/触摸屏幕时补上音乐
+    function startMusicOnce() {
+        if (bgMusic.paused) {
+            bgMusic.play().then(function () {
+                document.removeEventListener("click", startMusicOnce);
+                document.removeEventListener("touchstart", startMusicOnce);
+            }).catch(function () { /* 音源不可用时静默忽略 */ });
+        } else {
+            document.removeEventListener("click", startMusicOnce);
+            document.removeEventListener("touchstart", startMusicOnce);
+        }
+    }
+    document.addEventListener("click", startMusicOnce);
+    document.addEventListener("touchstart", startMusicOnce, { passive: true });
+    startMusicOnce();
 
     /* ===== 交互绑定 ===== */
-    initialTvBtn.addEventListener("click", function () {
-        generateAllPopups();
-        // 点击「打开」本身就是用户手势，这里尝试播放音乐
-        if (bgMusic.paused) bgMusic.play().catch(function () { /* 音源不可用时静默忽略 */ });
-    });
-
     window.addEventListener("resize", function () {
         if (isWithdrawing) return;
         document.querySelectorAll(".bless-popup:not(.special-popup):not(.final-popup)").forEach(function (p) {
