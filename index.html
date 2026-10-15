@@ -70,29 +70,6 @@
     .initial-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
     .initial-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; opacity: 1; }
 
-    /* 音乐开关：右上角，用户主动点击即满足浏览器播放策略 */
-    .music-toggle {
-        position: fixed;
-        top: 12px;
-        right: 12px;
-        z-index: 30000;
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 50%;
-        background: rgba(233, 30, 99, .12);
-        color: var(--pink-deep);
-        font-size: 18px;
-        line-height: 1;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color .2s ease, transform .2s ease;
-    }
-    .music-toggle:hover { background: rgba(233, 30, 99, .22); transform: scale(1.06); }
-    .music-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-
     .bless-popup {
         position: fixed;
         width: 220px;
@@ -260,8 +237,6 @@
     <button id="initialTvBtn" class="initial-btn" type="button">打开</button>
     <p class="signature">—— zzl</p>
 
-    <button id="musicToggle" class="music-toggle" type="button" aria-label="播放/暂停背景音乐" title="播放/暂停背景音乐">🔇</button>
-
     <!--
       背景音乐：优先播放仓库内自托管的 lst.mp3（同源，所有浏览器/App 表现一致）。
       后面的抖音 CDN 仅作兜底。注意不要再把会失效的外链放在第一位：
@@ -343,7 +318,6 @@
 
     const initialTvBtn = document.getElementById("initialTvBtn");
     const bgMusic = document.getElementById("bgMusic");
-    const musicToggle = document.getElementById("musicToggle");
 
     function later(fn, ms) {
         const id = setTimeout(function () {
@@ -503,29 +477,15 @@
         document.querySelectorAll(".bless-popup").forEach((p) => p.remove());
     }
 
-    /* ===== 背景音乐 ===== */
-    function updateMusicButton(playing) {
-        musicToggle.textContent = playing ? "🎵" : "🔇";
-        musicToggle.setAttribute("aria-pressed", playing ? "true" : "false");
-    }
-
-    musicToggle.addEventListener("click", function () {
-        if (bgMusic.paused) {
-            bgMusic.play().catch(function () { /* 音源不可用时静默忽略 */ });
-        } else {
-            bgMusic.pause();
-        }
-    });
-    bgMusic.addEventListener("play", () => updateMusicButton(true));
-    bgMusic.addEventListener("pause", () => updateMusicButton(false));
-    bgMusic.addEventListener("error", () => updateMusicButton(false), true);
-    updateMusicButton(false);
+    /* ===== 背景音乐 =====
+       音乐在点击「打开」时开始播放（属于用户手势，符合浏览器自动播放策略）。
+       页面上不再提供静音按钮，如需暂停请直接使用设备音量键。 */
 
     /* ===== 交互绑定 ===== */
     initialTvBtn.addEventListener("click", function () {
         generateAllPopups();
         // 点击「打开」本身就是用户手势，这里尝试播放音乐
-        if (bgMusic.paused) bgMusic.play().catch(function () { updateMusicButton(false); });
+        if (bgMusic.paused) bgMusic.play().catch(function () { /* 音源不可用时静默忽略 */ });
     });
 
     window.addEventListener("resize", function () {
