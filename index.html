@@ -260,7 +260,8 @@
         specialBlessing: "平安喜乐",   // 特殊祝福（点它的 × 会触发心形排列）
         finalBlessing: "天天开心",     // 最终全屏祝福
         finalTip: "💌 平安喜乐",
-        heartHoldMs: 12000       // 心形排好后再停留多久显示最终祝福（毫秒）
+        heartFormMs: 15000,      // 小弹窗排列成爱心所需时间（毫秒），需与 CSS 的 --heart-duration 一致
+        heartHoldMs: 3000        // 爱心完全就位后，再停留多久显示全屏祝福（毫秒）
     };
 
     const popupBgColors = [
@@ -440,7 +441,9 @@
             });
         });
 
-        const waitMs = reduceMotion ? 800 : CONFIG.heartHoldMs + 15000;
+        // 爱心排列动画本身耗时 heartFormMs，走完后再停留 heartHoldMs 才显示全屏祝福。
+        // （减弱动效时排列是瞬时的，所以不必等这段时间）
+        const waitMs = reduceMotion ? 800 : CONFIG.heartFormMs + CONFIG.heartHoldMs;
         later(showFinalPopup, waitMs);
     }
 
