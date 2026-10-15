@@ -75,7 +75,10 @@ npx serve .
 | `specialBlessing` | 特殊祝福文案，点它的 × 触发心形 | `"平安喜乐"` |
 | `finalBlessing` | 全屏最终祝福文案 | `"天天开心"` |
 | `finalTip` | 最终祝福顶部的小标题 | `"💌 平安喜乐"` |
-| `heartHoldMs` | 心形排好后停留多久再显示最终祝福（毫秒） | `12000` |
+| `heartFormMs` | 小弹窗排列成爱心所需时间（毫秒），需与 CSS 的 `--heart-duration` 一致 | `15000` |
+| `heartHoldMs` | 爱心完全就位后再停留多久显示全屏祝福（毫秒） | `3000` |
+
+> 时序说明：点击特殊祝福的 × 后，小弹窗需要 `heartFormMs`（15 秒）飞到心形位置，**完全就位后再停留 `heartHoldMs`（3 秒）**才出现全屏祝福。想更快出全屏，就把这两个值一起调小（改 `--heart-duration` 时记得同步改 `heartFormMs`）。
 
 其他常见的改动：
 
